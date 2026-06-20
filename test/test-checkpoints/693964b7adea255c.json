@@ -1,0 +1,59 @@
+{
+  "taskId": "693964b7adea255c",
+  "createdAt": 1781983073979,
+  "updatedAt": 1781983073990,
+  "algorithm": "md5",
+  "checkedFiles": {
+    "file1.txt": {
+      "key": "file1.txt",
+      "primarySize": 11,
+      "backupSize": 11,
+      "primaryHash": "b10a8db164e0754105b7a99be72e3fe5",
+      "backupHash": "b10a8db164e0754105b7a99be72e3fe5",
+      "hashMatch": true,
+      "fromCache": false,
+      "checkedAt": 1781983073981
+    },
+    "file2.txt": {
+      "key": "file2.txt",
+      "primarySize": 15,
+      "backupSize": 24,
+      "primaryHash": "fdc3e4fda1938d75d31636e748ec3e46",
+      "backupHash": "66be0fb64784d63e2c142bbf17b21a3c",
+      "hashMatch": false,
+      "fromCache": false,
+      "checkedAt": 1781983073983
+    },
+    "file3.txt": {
+      "key": "file3.txt",
+      "primarySize": 14,
+      "backupSize": 14,
+      "primaryHash": "580e3979651ceaf09293949793a9bbad",
+      "backupHash": "580e3979651ceaf09293949793a9bbad",
+      "hashMatch": true,
+      "fromCache": false,
+      "checkedAt": 1781983073985
+    },
+    "file4.txt": {
+      "key": "file4.txt",
+      "primarySize": 14,
+      "backupSize": 18,
+      "primaryHash": "b2f9fbb180476b24a6a619816019036e",
+      "backupHash": "660f80c12c9b54151e8494d0d76579e1",
+      "hashMatch": false,
+      "fromCache": false,
+      "checkedAt": 1781983073988
+    },
+    "subdir/nested.txt": {
+      "key": "subdir/nested.txt",
+      "primarySize": 19,
+      "backupSize": 19,
+      "primaryHash": "30957894993859944d59a8d0aaa16a85",
+      "backupHash": "30957894993859944d59a8d0aaa16a85",
+      "hashMatch": true,
+      "fromCache": false,
+      "checkedAt": 1781983073990
+    }
+  },
+  "status": "running"
+}

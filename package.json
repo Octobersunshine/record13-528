@@ -5,7 +5,10 @@
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
-    "test": "node test/bucket-compare.test.js"
+    "test": "node test/bucket-compare.test.js",
+    "test:checkpoint": "node test/checkpoint.test.js",
+    "test:api": "node test/api.test.js",
+    "test:all": "node test/bucket-compare.test.js && node test/checkpoint.test.js && node test/api.test.js"
   },
   "repository": {
     "type": "git",
