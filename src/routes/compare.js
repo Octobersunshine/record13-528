@@ -48,6 +48,9 @@ router.get('/compare', async (req, res) => {
       useCheckpoint = 'false',
       resume = 'true',
       forceRecheck = 'false',
+      sync = 'false',
+      dryRun = 'false',
+      syncMissingOnly = 'false',
     } = req.query;
 
     const result = await compareService.compareAllFiles({
@@ -56,6 +59,9 @@ router.get('/compare', async (req, res) => {
       useCheckpoint: parseBool(useCheckpoint),
       resume: parseBool(resume),
       forceRecheck: parseBool(forceRecheck),
+      sync: parseBool(sync),
+      dryRun: parseBool(dryRun),
+      syncMissingOnly: parseBool(syncMissingOnly),
     });
 
     res.json({
@@ -110,6 +116,9 @@ router.post('/compare', express.json(), async (req, res) => {
       useCheckpoint = false,
       resume = true,
       forceRecheck = false,
+      sync = false,
+      dryRun = false,
+      syncMissingOnly = false,
     } = req.body;
 
     let result;
@@ -140,12 +149,50 @@ router.post('/compare', express.json(), async (req, res) => {
         useCheckpoint: parseBool(useCheckpoint),
         resume: parseBool(resume),
         forceRecheck: parseBool(forceRecheck),
+        sync: parseBool(sync),
+        dryRun: parseBool(dryRun),
+        syncMissingOnly: parseBool(syncMissingOnly),
       });
     }
 
     res.json({
       success: true,
       data: result,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+router.post('/sync', express.json(), async (req, res) => {
+  try {
+    const compareService = getCompareService(req);
+    const {
+      algorithm = 'md5',
+      prefix = '',
+      useCheckpoint = false,
+      resume = true,
+      forceRecheck = false,
+      dryRun = false,
+      syncMissingOnly = false,
+    } = req.body;
+
+    const syncResult = await compareService.syncMismatchedFiles({
+      algorithm,
+      prefix,
+      useCheckpoint: parseBool(useCheckpoint),
+      resume: parseBool(resume),
+      forceRecheck: parseBool(forceRecheck),
+      dryRun: parseBool(dryRun),
+      syncMissingOnly: parseBool(syncMissingOnly),
+    });
+
+    res.json({
+      success: true,
+      data: syncResult,
     });
   } catch (error) {
     res.status(400).json({

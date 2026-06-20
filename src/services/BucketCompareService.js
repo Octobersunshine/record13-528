@@ -1,5 +1,6 @@
 const LocalBucketAdapter = require('../adapters/LocalBucketAdapter');
 const CheckpointManager = require('../utils/CheckpointManager');
+const FileSyncService = require('./FileSyncService');
 
 class BucketCompareService {
   constructor(primaryBucketPath, backupBucketPath, options = {}) {
@@ -9,6 +10,7 @@ class BucketCompareService {
     this.backupPath = backupBucketPath;
     this.checkpointManager = options.checkpointManager || new CheckpointManager();
     this.onProgress = options.onProgress || null;
+    this.onSyncProgress = options.onSyncProgress || null;
   }
 
   async compareAllFiles(options = {}) {
@@ -18,6 +20,9 @@ class BucketCompareService {
       useCheckpoint = false,
       resume = true,
       forceRecheck = false,
+      sync = false,
+      dryRun = false,
+      syncMissingOnly = false,
     } = options;
 
     const [primaryFiles, backupFiles] = await Promise.all([
@@ -150,7 +155,105 @@ class BucketCompareService {
       result.taskId = checkpoint.taskId;
     }
 
+    if (sync) {
+      const filesToSync = syncMissingOnly
+        ? [...onlyInPrimary]
+        : [...onlyInPrimary, ...mismatchedFiles];
+
+      if (filesToSync.length > 0) {
+        const syncService = new FileSyncService(this.primaryPath, this.backupPath, {
+          dryRun,
+          overwrite: true,
+          checkpointManager: useCheckpoint ? this.checkpointManager : null,
+          onProgress: this.onSyncProgress,
+        });
+
+        const syncResult = await syncService.syncFiles(filesToSync, {
+          useCheckpoint,
+        });
+
+        result.sync = {
+          enabled: true,
+          dryRun,
+          syncMissingOnly,
+          totalToSync: filesToSync.length,
+          ...syncResult,
+        };
+
+        if (syncResult.succeeded > 0 && !dryRun) {
+          const syncedKeys = syncResult.results
+            .filter((r) => r.success && !r.skipped)
+            .map((r) => r.key);
+
+          result.summary.hashMismatched -= syncedKeys.filter((k) =>
+            mismatchedFiles.includes(k)
+          ).length;
+          result.summary.onlyInPrimary -= syncedKeys.filter((k) =>
+            onlyInPrimary.includes(k)
+          ).length;
+          result.summary.hashMatched += syncedKeys.length;
+
+          for (const detail of result.details) {
+            if (syncedKeys.includes(detail.key)) {
+              detail.hashMatch = true;
+              detail.backupHash = detail.primaryHash;
+              detail.backupSize = detail.primarySize;
+              detail.synced = true;
+            }
+          }
+
+          result.matchedFiles = [
+            ...result.matchedFiles,
+            ...syncedKeys.filter((k) => !result.matchedFiles.includes(k)),
+          ];
+          result.mismatchedFiles = result.mismatchedFiles.filter(
+            (k) => !syncedKeys.includes(k)
+          );
+          result.onlyInPrimary = result.onlyInPrimary.filter(
+            (k) => !syncedKeys.includes(k)
+          );
+        }
+      } else {
+        result.sync = {
+          enabled: true,
+          dryRun,
+          syncMissingOnly,
+          totalToSync: 0,
+          succeeded: 0,
+          skipped: 0,
+          failed: 0,
+          fromCheckpoint: 0,
+          results: [],
+        };
+      }
+    }
+
     return result;
+  }
+
+  async syncMismatchedFiles(options = {}) {
+    const {
+      algorithm = 'md5',
+      prefix = '',
+      useCheckpoint = false,
+      resume = true,
+      forceRecheck = false,
+      dryRun = false,
+      syncMissingOnly = false,
+    } = options;
+
+    const compareResult = await this.compareAllFiles({
+      algorithm,
+      prefix,
+      useCheckpoint,
+      resume,
+      forceRecheck,
+      sync: true,
+      dryRun,
+      syncMissingOnly,
+    });
+
+    return compareResult.sync;
   }
 
   async compareSingleFile(key, options = {}) {

@@ -1,7 +1,7 @@
 {
   "taskId": "693964b7adea255c",
-  "createdAt": 1781983073979,
-  "updatedAt": 1781983073990,
+  "createdAt": 1781983393224,
+  "updatedAt": 1781983393248,
   "algorithm": "md5",
   "checkedFiles": {
     "file1.txt": {
@@ -12,7 +12,7 @@
       "backupHash": "b10a8db164e0754105b7a99be72e3fe5",
       "hashMatch": true,
       "fromCache": false,
-      "checkedAt": 1781983073981
+      "checkedAt": 1781983393225
     },
     "file2.txt": {
       "key": "file2.txt",
@@ -22,7 +22,7 @@
       "backupHash": "66be0fb64784d63e2c142bbf17b21a3c",
       "hashMatch": false,
       "fromCache": false,
-      "checkedAt": 1781983073983
+      "checkedAt": 1781983393231
     },
     "file3.txt": {
       "key": "file3.txt",
@@ -32,7 +32,7 @@
       "backupHash": "580e3979651ceaf09293949793a9bbad",
       "hashMatch": true,
       "fromCache": false,
-      "checkedAt": 1781983073985
+      "checkedAt": 1781983393233
     },
     "file4.txt": {
       "key": "file4.txt",
@@ -42,7 +42,7 @@
       "backupHash": "660f80c12c9b54151e8494d0d76579e1",
       "hashMatch": false,
       "fromCache": false,
-      "checkedAt": 1781983073988
+      "checkedAt": 1781983393241
     },
     "subdir/nested.txt": {
       "key": "subdir/nested.txt",
@@ -52,7 +52,7 @@
       "backupHash": "30957894993859944d59a8d0aaa16a85",
       "hashMatch": true,
       "fromCache": false,
-      "checkedAt": 1781983073990
+      "checkedAt": 1781983393248
     }
   },
   "status": "running"
